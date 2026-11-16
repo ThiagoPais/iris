@@ -1,6 +1,13 @@
-# Database Design Document (DDD) - Project Iris
+---
+type: dbdd
+project: iris
+status: active
+updated: 2026-11-16
+---
 
-## 1. Overview
+# Iris: Database Design
+
+## Overview
 
 **Database:** PostgreSQL 17 (Docker container, same Compose stack as the hub).
 **ORM:** Prisma (latest major version). Raw SQL is used only for the constructs listed in §5.
@@ -13,7 +20,7 @@
 3. Every canonical change is written in **one transaction** together with its `TaskChange`, `SyncLog` and `SyncJob` rows.
 4. Nothing is hard-deleted, except `SyncLog` retention pruning and `DONE` jobs older than 7 days.
 
-## 2. Entity-Relationship Diagram (ERD)
+## Entity-relationship diagram
 
 ```mermaid
 erDiagram
@@ -88,7 +95,9 @@ erDiagram
     TASK ||--o{ SYNC_LOG : "is audited by"
 ```
 
-## 3. Prisma Schema (authoritative)
+## Prisma schema
+
+<!-- TODO: once spec 01 creates prisma/schema.prisma, replace this copy with a link to it (CONVENTIONS section 8: the schema file owns the columns). -->
 
 ```prisma
 generator client {
@@ -267,9 +276,9 @@ model AgentDevice {
 }
 ```
 
-## 4. Schema Definitions & Constraints
+## Entities
 
-### 4.1 `tasks`
+### `tasks`
 
 - `title`: Non-empty after trim, ≤ 1024 chars (Google Tasks limit). Enforced in the domain layer.
 - `tags`: Lowercased, deduplicated and sorted before storage, so hashes stay stable.
@@ -279,7 +288,7 @@ model AgentDevice {
 - `version`: +1 on every applied change. Never decremented.
 - `last_edit_at`: The `sourceUpdatedAt` of the last applied inbound change, used by LWW (ADR-005).
 
-### 4.2 `external_links`
+### `external_links`
 
 - `(task_id, platform)` unique: at most one link per platform per task.
 - `(platform, external_id)` unique: Postgres treats NULLs as distinct, so several `PENDING_CREATE` links with a NULL ID may coexist.
@@ -294,29 +303,31 @@ model AgentDevice {
   - Taskwarrior: `{ "entry": string }` (original TW entry timestamp, kept on re-export)
 - For `TASKWARRIOR` (agent platform), `external_id` is the TW UUID. When the change feed serves a task with no link for the agent platform, it creates one (`ACTIVE`, UUID v4) in the same transaction (ADR-008). Agent links never use `PENDING_CREATE` or `last_synced_hash`.
 
-### 4.3 `task_changes`
+### `task_changes`
 
 - Append-only, one row per applied canonical change (including creation).
 - `id` is the agent cursor. Feed query: every task with a change `id > :since` whose `origin_device IS DISTINCT FROM :deviceId`, returning the current task state and `max(id)` as the new cursor.
 
-### 4.4 `sync_jobs`
+### `sync_jobs`
 
 - One `PENDING` job at most per `(task_id, target)` (partial unique index, §5).
 - Only push targets appear here: `GOOGLE_TASKS`, `GOOGLE_CALENDAR`, `HABITICA`.
 - Retry: `attempts += 1`, `next_run_at = now() + min(5s · 2^attempts, 1h)`. After 10 attempts, `status = DEAD`.
 - `DONE` rows older than 7 days are deleted by the daily maintenance job.
 
-### 4.5 `sync_logs`
+### `sync_logs`
 
 - One row per inbound change (every outcome) and per outbound attempt.
 - `raw_payload`: the payload as received or sent, with secrets removed.
 - Retention: 90 days, pruned daily.
 
-### 4.6 `agent_devices`
+### `agent_devices`
 
 - Upserted on each feed request (`last_seen_at`, `cursor` = cursor returned). For observability only; the agent's local cursor is authoritative.
 
-## 5. Raw SQL (in migrations)
+## Constraints and invariants
+
+### Raw SQL (in migrations)
 
 1. **Outbox coalescing:** at most one pending job per task and target.
 
@@ -349,7 +360,7 @@ model AgentDevice {
 
 4. **Ingest serialization:** `SELECT pg_advisory_xact_lock(hashtextextended($platform || ':' || $externalId, 0))` at the start of each ingest transaction, then `SELECT … FROM tasks WHERE id = $1 FOR UPDATE` once the task is resolved.
 
-## 6. Indexing Summary
+## Indexes and performance
 
 | Index | Purpose |
 | --- | --- |
