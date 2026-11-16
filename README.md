@@ -25,6 +25,21 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Documentation
+
+Product, architecture and decisions for Iris live in [`docs/`](./docs/iris.md), following the PanWare documentation conventions.
+
+| Need | Read |
+|---|---|
+| What is it and how is it built | [iris.md](./docs/iris.md) |
+| What it must do | [iris-prd.md](./docs/iris-prd.md) |
+| Data model | [iris-dbdd.md](./docs/iris-dbdd.md) |
+| Where we are, what is next | [iris-roadmap.md](./docs/iris-roadmap.md) |
+| Why we chose X | [adr/](./docs/adr/README.md) |
+| How to build each work package | [spec/](./spec/README.md) |
+
+Update the owning document in the same change as any structural code change (schema, auth, new integration).
+
 ## Project setup
 
 ```bash
