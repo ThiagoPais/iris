@@ -30,6 +30,14 @@ TODO (docs-author): 3–5 outcomes. The business detail lives in the [PRD goals]
 - **Habitica:** REST API v3 and a `taskActivity` webhook.
 - **Deployment:** Docker Compose (hub + Postgres) on a VPS behind Caddy with TLS. Public HTTPS is required for the Google and Habitica inbound calls.
 
+<!-- TODO (docs-author): the bullets below came from the PRD and repeat the list above; keep one. -->
+
+- **Hub:** NestJS 12 (TypeScript, ESM), running in Docker on a VPS behind Caddy with TLS (ADR-015).
+- **Database:** PostgreSQL 17 through Prisma ORM (ADR-002). See `iris-ddd.md`.
+- **Taskwarrior integration:** Python 3.11+ standard library only. A hook script and a pull agent with a systemd user timer (ADR-008/009).
+- **Google integration:** an Apps Script project (inbound) and the `googleapis` REST clients with an OAuth2 refresh token (outbound) (ADR-010).
+- **Habitica integration:** REST API v3 and a `taskActivity` webhook (ADR-011).
+
 ## Architecture
 
 - **Canonical store:** `tasks` is the source of truth; `external_links` maps each task to one identifier per platform (ADR-003).
@@ -43,6 +51,39 @@ TODO (docs-author): 3–5 outcomes. The business detail lives in the [PRD goals]
 - Separate bearer tokens per source (`agent`, `google-script`, `admin`), plus a URL path secret for the Habitica webhook.
 - The origin platform is derived from the route and credential, never from a client-supplied header (ADR-012).
 - TLS terminates at Caddy. Secrets exist only in environment variables, and access logs for the Habitica route are redacted.
+
+### Topology
+
+```text
+ PC (personal / work)                                   Internet
+┌───────────────────────────┐                 ┌───────────────────────────┐
+│ task CLI                  │                 │ Google Apps Script (1 min)│
+│  ├ on-add.iris  ─┐        │ POST /v1/ingest │  Tasks + Calendar poll    │
+│  └ on-modify.iris┤───────►│────────┐        └─────────────┬─────────────┘
+│  spool.jsonl ◄───┘(fail)  │        │                      │ POST /v1/ingest/google-*
+│ iris-agent (timer 60s)    │        ▼                      ▼
+│  flush spool, pull feed ◄─┼── GET /v1/agents/taskwarrior/changes
+│  task rc.hooks=off import │   ┌────────────────────────────────────────┐
+└───────────────────────────┘   │ IRIS HUB                               │
+                                │  AuthGuard → IngestService (tx):       │
+ Habitica ── webhook ──────────►│   lock → resolve link → echo? → LWW →  │
+   ▲                            │   merge → persist Task, TaskChange,    │
+   │                            │   SyncLog, SyncJob(s)                  │
+   │ REST v3                    │  SyncWorker: claim jobs SKIP LOCKED →  │
+   └────────────────────────────│   adapter.push → link.lastSyncedHash   │
+ Google Tasks / Calendar ◄──────│  PostgreSQL                            │
+                    REST        └────────────────────────────────────────┘
+```
+
+### Data flow
+
+1. **Capture:** A platform emits a change: a hook POST, an Apps Script batch, a Habitica webhook or an agent flush.
+2. **Authenticate:** The guard maps the token to a principal. The route fixes the origin platform (ADR-012).
+3. **Normalize:** The platform mapper converts the payload into an `InboundChange` (external ID, operation, supported fields, `sourceUpdatedAt`, optional `irisTaskId` hint).
+4. **Ingest (one transaction):** advisory lock → resolve or create the link → echo check → staleness check → partial merge → duplicate check → persist `Task` (version + 1), `TaskChange`, `SyncLog`, and a `SyncJob` for every push target except the origin.
+5. **Dispatch:** The worker claims due jobs, renders the current task for the target, calls the remote API, and updates `ExternalLink` (ID, state, `lastSyncedHash`). Failures are retried with backoff.
+6. **Pull:** Local agents poll the change feed and apply changes with hooks off.
+7. **Echo:** When the platform reports Iris's own write back, it matches `lastSyncedHash` and is dropped.
 
 ## Documentation map
 

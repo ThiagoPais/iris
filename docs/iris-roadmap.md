@@ -13,7 +13,13 @@ updated: 2026-11-16
 
 ## Phases
 
-TODO: filled from the PRD in the next step.
+| Phase | Scope | Exit criteria |
+| --- | --- | --- |
+| 1 — Core Hub | Config, Prisma schema, auth, domain (projection/hash/merge), IngestService, outbox + worker, change feed, admin API, Docker | e2e: ingest → job → fake adapter push → echo suppressed |
+| 2 — Taskwarrior | Hook (`on-add`, `on-modify`), spool, agent, installer, TW mapper and endpoints | Two TW data dirs sync through Iris on one machine |
+| 3 — External | Google Tasks, Google Calendar, Apps Script, Habitica | US-01…US-08 pass manually against real accounts |
+
+<!-- TODO: phase 4 (deployment, spec 10) has no exit criteria yet. -->
 
 ## Next steps
 
