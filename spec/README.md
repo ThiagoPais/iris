@@ -4,11 +4,10 @@ These files are **instructions for an AI coding agent**. Each spec is one work p
 
 ## Sources of truth (priority order)
 
-1. `docs/iris-adr.md`: decisions. When a spec and an ADR conflict, the ADR wins; stop and log the conflict (see Protocol).
-2. `docs/iris-ddd.md`: the database schema. §3 is copied **verbatim** into `prisma/schema.prisma`.
-3. `docs/iris-prd.md`: behavior, field support matrix (§5), user stories.
+1. [`docs/adr/`](../docs/adr/README.md): decisions. When a spec and an ADR conflict, the ADR wins; stop and log the conflict (see Protocol).
+2. [`docs/iris-dbdd.md`](../docs/iris-dbdd.md): the database schema. Its [Prisma schema](../docs/iris-dbdd.md#prisma-schema) section is copied **verbatim** into `prisma/schema.prisma`.
+3. [`docs/iris-prd.md`](../docs/iris-prd.md): behavior, [field support matrix](../docs/iris-prd.md#canonical-model--field-support-matrix), user stories.
 4. These specs: file layout, contracts, algorithms, tests.
-5. `docs/description.md`: historical brief. Never implement anything from it that an ADR supersedes.
 
 ## Execution order
 

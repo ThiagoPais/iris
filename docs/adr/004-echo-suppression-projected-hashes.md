@@ -8,7 +8,7 @@ updated: 2026-11-16
 
 # 004. Echo suppression with per-link projected hashes (no time window)
 
-**Supersedes:** "matches `content_hash` within a 5-second window" in `description.md`.
+**Supersedes:** "matches `content_hash` within a 5-second window" in `description.md` (removed; last version in commit `28a09e9`).
 
 ## Context
 

@@ -1,7 +1,7 @@
 # 07 — Google OAuth, Google Tasks & Apps Script (Tasks part)
 
 **Goal:** bidirectional sync with one Google Tasks list: Apps Script pushes inbound, Iris calls the REST API outbound.
-**ADRs:** 004, 006, 010, 014. **Docs:** PRD §5 (Google Tasks column).
+**ADRs:** 004, 006, 010, 014. **Docs:** [PRD: field support matrix](../docs/iris-prd.md#canonical-model--field-support-matrix) (Google Tasks column).
 **Dependencies:** `@googleapis/tasks`, `google-auth-library`.
 
 ## 1. OAuth bootstrap (`scripts/google-auth.ts`)

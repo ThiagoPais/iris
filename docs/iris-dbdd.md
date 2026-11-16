@@ -10,7 +10,7 @@ updated: 2026-11-16
 ## Overview
 
 **Database:** PostgreSQL 17 (Docker container, same Compose stack as the hub).
-**ORM:** Prisma (latest major version). Raw SQL is used only for the constructs listed in §5.
+**ORM:** Prisma (latest major version). Raw SQL is used only for the constructs listed in [Constraints and invariants](#constraints-and-invariants).
 **Objective:** Store one canonical record per task, map it to every platform's identifier, guarantee idempotent and loop-free sync, provide a durable outbound queue and an ordered change feed, and keep a complete audit trail.
 
 **Design principles**
@@ -310,7 +310,7 @@ model AgentDevice {
 
 ### `sync_jobs`
 
-- One `PENDING` job at most per `(task_id, target)` (partial unique index, §5).
+- One `PENDING` job at most per `(task_id, target)` (partial unique index, see [Constraints and invariants](#constraints-and-invariants)).
 - Only push targets appear here: `GOOGLE_TASKS`, `GOOGLE_CALENDAR`, `HABITICA`.
 - Retry: `attempts += 1`, `next_run_at = now() + min(5s · 2^attempts, 1h)`. After 10 attempts, `status = DEAD`.
 - `DONE` rows older than 7 days are deleted by the daily maintenance job.

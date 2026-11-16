@@ -8,7 +8,7 @@ updated: 2026-11-16
 
 # 007. Durable outbox in PostgreSQL for push targets
 
-**Supersedes:** "native event emitter" dispatch implied in `description.md`.
+**Supersedes:** "native event emitter" dispatch implied in `description.md` (removed; last version in commit `28a09e9`).
 
 ## Context
 

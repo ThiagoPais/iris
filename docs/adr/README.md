@@ -9,7 +9,7 @@ updated: 2026-11-16
 
 This file collects the architecture decisions for Iris. Each record is immutable once `Accepted`. To change a decision, add a new record that supersedes it and set the old one's status to `Superseded by ADR-XXX`.
 
-`docs/description.md` is the original brief. Where a record below differs from it, the record wins, and the record says so under **Supersedes**.
+`description.md` (removed; last version in commit `28a09e9`) was the original brief. Where a record below differs from it, the record wins, and the record says so under **Supersedes**.
 
 **Status legend:** `Proposed` · `Accepted` · `Superseded` · `Deprecated`
 

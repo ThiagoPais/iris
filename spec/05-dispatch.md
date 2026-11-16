@@ -1,7 +1,7 @@
 # 05 — Dispatch worker, maintenance & admin API
 
 **Goal:** deliver outbox jobs to push platforms reliably and idempotently; prune data; expose the command-center API.
-**ADRs:** 004, 007, 013. **Docs:** DDD §4.4, §5.3.
+**ADRs:** 004, 007, 013. **Docs:** [DBDD: `sync_jobs`](../docs/iris-dbdd.md#sync_jobs), [DBDD raw SQL](../docs/iris-dbdd.md#raw-sql-in-migrations) item 3.
 
 ## 1. Push adapter contract (`src/sync/push-adapter.ts`)
 
@@ -34,7 +34,7 @@ Provide `FakePushAdapter` in `test/helpers/` that records calls and can be scrip
 Lifecycle: start a loop in `onApplicationBootstrap` if `SYNC_WORKER_ENABLED`; stop in `onApplicationShutdown` (await the in-flight batch). Loop: `tick()` then `setTimeout(SYNC_WORKER_INTERVAL_MS)`; never overlap ticks.
 
 `tick()`:
-1. Claim jobs with DDD §5.3 SQL (`LIMIT SYNC_WORKER_BATCH`).
+1. Claim jobs with [DBDD raw SQL](../docs/iris-dbdd.md#raw-sql-in-migrations) item 3 (`LIMIT SYNC_WORKER_BATCH`).
 2. Process claimed jobs **sequentially** (rate-limit friendliness) via `runJob(job)`.
 
 `runJob(job)` (public for tests):

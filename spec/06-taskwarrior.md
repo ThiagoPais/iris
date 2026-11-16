@@ -1,7 +1,7 @@
 # 06 — Taskwarrior (hub side + hook + agent)
 
 **Goal:** Taskwarrior task **creation** (`on-add`) and **modification** (`on-modify`) reach Iris without slowing the CLI, and changes from elsewhere land in Taskwarrior on every PC.
-**ADRs:** 008, 009, 012, 014. **Docs:** PRD §5 (TW column), `description.md` (Taskwarrior hooks section).
+**ADRs:** 008, 009, 012, 014. **Docs:** [PRD: field support matrix](../docs/iris-prd.md#canonical-model--field-support-matrix) (TW column).
 
 ## Part A — Hub
 

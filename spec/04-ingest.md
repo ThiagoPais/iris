@@ -1,7 +1,7 @@
 # 04 — Ingest, outbox enqueue & change feed
 
 **Goal:** a single transactional entry point that turns any platform's change into canonical state. It suppresses echoes and duplicates, rejects stale edits, records audit and feed rows, and enqueues outbound jobs.
-**ADRs:** 003, 004, 005, 006, 007, 008, 013. **Docs:** DDD §4–§5.
+**ADRs:** 003, 004, 005, 006, 007, 008, 013. **Docs:** [DBDD: Entities](../docs/iris-dbdd.md#entities), [DBDD: Constraints and invariants](../docs/iris-dbdd.md#constraints-and-invariants).
 
 ## 1. Contracts (`src/sync/types.ts`)
 

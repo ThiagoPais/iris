@@ -1,7 +1,7 @@
 # 03 — Domain (pure functions)
 
 **Goal:** a framework-free core that normalizes, projects, hashes and merges task fields. Everything else builds on it.
-**ADRs:** 004, 005, 006, 013, 014. **Docs:** PRD §5.
+**ADRs:** 004, 005, 006, 013, 014. **Docs:** [PRD: field support matrix](../docs/iris-prd.md#canonical-model--field-support-matrix).
 **Constraint:** `src/domain/**` imports only `node:crypto` and `luxon` (invariant I6).
 
 ## 1. Types (`src/domain/types.ts`)

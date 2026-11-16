@@ -33,7 +33,7 @@ TODO (docs-author): 3–5 outcomes. The business detail lives in the [PRD goals]
 <!-- TODO (docs-author): the bullets below came from the PRD and repeat the list above; keep one. -->
 
 - **Hub:** NestJS 12 (TypeScript, ESM), running in Docker on a VPS behind Caddy with TLS (ADR-015).
-- **Database:** PostgreSQL 17 through Prisma ORM (ADR-002). See `iris-ddd.md`.
+- **Database:** PostgreSQL 17 through Prisma ORM (ADR-002). See [`iris-dbdd.md`](./iris-dbdd.md).
 - **Taskwarrior integration:** Python 3.11+ standard library only. A hook script and a pull agent with a systemd user timer (ADR-008/009).
 - **Google integration:** an Apps Script project (inbound) and the `googleapis` REST clients with an OAuth2 refresh token (outbound) (ADR-010).
 - **Habitica integration:** REST API v3 and a `taskActivity` webhook (ADR-011).
@@ -89,7 +89,6 @@ TODO (docs-author): 3–5 outcomes. The business detail lives in the [PRD goals]
 
 | Document | Purpose |
 | --- | --- |
-| [`description.md`](./description.md) | Original brief (PRD/ADD draft). Superseded where the ADRs say so. |
 | [`iris-prd.md`](./iris-prd.md) | Product requirements: goals, features, user stories, field matrix, phases. |
 | [`iris-dbdd.md`](./iris-dbdd.md) | Database design: ERD, authoritative Prisma schema, constraints, raw SQL. |
 | [`adr/`](./adr/README.md) | Architecture decision records (ADR-001…016). |

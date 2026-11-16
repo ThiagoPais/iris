@@ -8,7 +8,7 @@ updated: 2026-11-16
 
 # 012. Authentication: per-source bearer tokens; origin derived from the credential
 
-**Supersedes:** the client-supplied `origin` header in `description.md`.
+**Supersedes:** the client-supplied `origin` header in `description.md` (removed; last version in commit `28a09e9`).
 
 ## Context
 

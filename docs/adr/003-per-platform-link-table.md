@@ -8,7 +8,7 @@ updated: 2026-11-16
 
 # 003. Per-platform link table instead of nullable ID columns
 
-**Supersedes:** `TaskMapping.taskwarriorUuid/googleTaskId/habiticaId/googleEventId` in `description.md`.
+**Supersedes:** `TaskMapping.taskwarriorUuid/googleTaskId/habiticaId/googleEventId` in `description.md` (removed; last version in commit `28a09e9`).
 
 ## Context
 

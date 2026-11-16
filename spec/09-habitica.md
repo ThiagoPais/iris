@@ -1,7 +1,7 @@
 # 09 — Habitica (todos)
 
 **Goal:** every task is a Habitica todo; completing it anywhere scores it up (XP/gold), reopening scores it down.
-**ADRs:** 011, 012, 013. **Docs:** PRD §5 (Habitica column).
+**ADRs:** 011, 012, 013. **Docs:** [PRD: field support matrix](../docs/iris-prd.md#canonical-model--field-support-matrix) (Habitica column).
 **Dependencies:** none (use global `fetch`).
 
 ## 1. Client (`src/platforms/habitica/habitica.client.ts`)
