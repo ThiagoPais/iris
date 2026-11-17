@@ -1,5 +1,7 @@
 # 08 — Google Calendar (dedicated `Iris` calendar)
 
+> **Post-MVP. Do not execute yet.** Event sync is PRD FR-15 (open question Q4). In the MVP, dated tasks reach Google Calendar through Google Tasks (FR-07). Before running this spec, revise it so only tasks marked as events (for example `+event`) become events, and record the change to ADR-010 in a new ADR.
+
 **Goal:** tasks with a due date appear as events on one calendar. Moving an event reschedules its task; deleting it unschedules the task.
 **ADRs:** 010, 013, 014. **Depends on:** spec 07 (auth, error mapping, Apps Script base).
 **Dependency:** `@googleapis/calendar`.

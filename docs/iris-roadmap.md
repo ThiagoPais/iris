@@ -2,7 +2,7 @@
 type: roadmap
 project: iris
 status: active
-updated: 2026-11-16
+updated: 2026-11-17
 ---
 
 # Iris: Roadmap
@@ -17,7 +17,9 @@ updated: 2026-11-16
 | --- | --- | --- |
 | 1 — Core Hub | Config, Prisma schema, auth, domain (projection/hash/merge), IngestService, outbox + worker, change feed, admin API, Docker | e2e: ingest → job → fake adapter push → echo suppressed |
 | 2 — Taskwarrior | Hook (`on-add`, `on-modify`), spool, agent, installer, TW mapper and endpoints | Two TW data dirs sync through Iris on one machine |
-| 3 — External | Google Tasks, Google Calendar, Apps Script, Habitica | US-01…US-08 pass manually against real accounts |
+| 3 — External | Google Tasks (dated tasks show in Google Calendar through it), Apps Script, Habitica | US-01…US-08 pass manually against real accounts |
+
+| Post-MVP — Event sync | Google Calendar events for tasks marked as events (PRD FR-15, spec 08) | Open (PRD Q4) |
 
 <!-- TODO: phase 4 (deployment, spec 10) has no exit criteria yet. -->
 
@@ -34,14 +36,18 @@ updated: 2026-11-16
 - `iris_hook.py` (`on-add`/`on-modify`), spool, `iris-agent` (flush/pull/push-all), installer and systemd timer.
 - Taskwarrior mapper, ingest endpoint and feed endpoint.
 
-### Phase 3: External Integrations (specs 07–09)
+### Phase 3: External Integrations (specs 07 and 09)
 
-- Google OAuth CLI, Google Tasks and Calendar adapters, Apps Script project.
+- Google OAuth CLI, Google Tasks adapter, Apps Script project.
 - Habitica client (throttled), adapter and webhook.
 
 ### Phase 4: Deployment (spec 10)
 
 - Production Dockerfile, Caddy, backups and maintenance jobs.
+
+### Post-MVP: Event sync (spec 08)
+
+- Settle PRD Q4, revise spec 08 to sync only tasks marked as events, and write the ADR that supersedes the affected parts of ADR-010.
 
 ## Log
 

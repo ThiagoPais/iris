@@ -21,9 +21,11 @@ These files are **instructions for an AI coding agent**. Each spec is one work p
 | 05 | [dispatch, worker & admin API](./05-dispatch.md) | 1 | 04 |
 | 06 | [taskwarrior](./06-taskwarrior.md) | 2 | 05 |
 | 07 | [google tasks + apps script](./07-google-tasks.md) | 3 | 05 |
-| 08 | [google calendar](./08-google-calendar.md) | 3 | 07 |
+| 08 | [google calendar](./08-google-calendar.md) | post-MVP (PRD FR-15) | 07 |
 | 09 | [habitica](./09-habitica.md) | 3 | 05 |
 | 10 | [deployment](./10-deployment.md) | 4 | 05 (+ any adapters) |
+
+Spec 08 is not part of the MVP: skip it until event sync (PRD FR-15, open question Q4) is designed. It must then be revised to sync only tasks marked as events, and the parts of ADR-010 it changes need a superseding ADR.
 
 ## Protocol (every spec)
 

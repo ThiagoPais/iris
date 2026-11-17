@@ -2,14 +2,14 @@
 type: overview
 project: iris
 status: active
-updated: 2026-11-16
+updated: 2026-11-17
 ---
 
 # Iris
 
 ## Summary
 
-Iris is a personal sync hub and command center that keeps tasks consistent across Taskwarrior (personal and work PCs), Google Tasks (Android), Google Calendar and Habitica. It stores one canonical record per task, keeps the cross-platform ID mappings, resolves edit collisions and suppresses sync loops.
+Iris is a personal sync hub and command center that keeps tasks consistent across Taskwarrior (personal and work PCs), Google Tasks (Android, and Google Calendar through it) and Habitica. It stores one canonical record per task, keeps the cross-platform ID mappings, resolves edit collisions and suppresses sync loops.
 
 ## Goals
 
@@ -19,14 +19,14 @@ TODO (docs-author): 3–5 outcomes. The business detail lives in the [PRD goals]
 
 | Repository | Purpose | URL |
 |---|---|---|
-| iris-hub | Hub (NestJS), local agents, Apps Script, docs | TODO: no remote yet |
+| iris | Hub (NestJS), local agents, Apps Script, docs | https://github.com/ThiagoPais/iris |
 
 ## Stack
 
 - **Hub:** NestJS 12 (TypeScript, ESM), Vitest, oxlint, Prettier.
 - **Database:** PostgreSQL 17 through Prisma ORM.
 - **Local agents:** Python 3.11+ (standard library only) with a systemd user timer.
-- **Google:** Apps Script (inbound) and the `googleapis` Tasks v1 / Calendar v3 clients with an OAuth2 refresh token (outbound).
+- **Google:** Apps Script (inbound) and the `googleapis` Tasks v1 client with an OAuth2 refresh token (outbound). The Calendar v3 client comes with event sync (post-MVP).
 - **Habitica:** REST API v3 and a `taskActivity` webhook.
 - **Deployment:** Docker Compose (hub + Postgres) on a VPS behind Caddy with TLS. Public HTTPS is required for the Google and Habitica inbound calls.
 
@@ -44,7 +44,7 @@ TODO (docs-author): 3–5 outcomes. The business detail lives in the [PRD goals]
 - **Transactional ingest:** each inbound change is applied in one transaction that writes the task, a `task_changes` feed row, a `sync_logs` audit row and one `sync_jobs` outbox row per push target.
 - **Outbox worker:** claims jobs with `FOR UPDATE SKIP LOCKED` and retries with exponential backoff until `DEAD` (ADR-007).
 - **Change feed:** a monotonic `task_changes.id` serves as the cursor for local agents (ADR-008).
-- **Idempotency:** Habitica aliases (`iris-<taskId>`), Calendar `extendedProperties.private.irisTaskId`, and `PENDING_CREATE` link adoption for Google Tasks.
+- **Idempotency:** Habitica aliases (`iris-<taskId>`), Calendar `extendedProperties.private.irisTaskId` (post-MVP event sync), and `PENDING_CREATE` link adoption for Google Tasks.
 
 ### Security blueprint
 
@@ -58,7 +58,7 @@ TODO (docs-author): 3–5 outcomes. The business detail lives in the [PRD goals]
  PC (personal / work)                                   Internet
 ┌───────────────────────────┐                 ┌───────────────────────────┐
 │ task CLI                  │                 │ Google Apps Script (1 min)│
-│  ├ on-add.iris  ─┐        │ POST /v1/ingest │  Tasks + Calendar poll    │
+│  ├ on-add.iris  ─┐        │ POST /v1/ingest │  Tasks poll               │
 │  └ on-modify.iris┤───────►│────────┐        └─────────────┬─────────────┘
 │  spool.jsonl ◄───┘(fail)  │        │                      │ POST /v1/ingest/google-*
 │ iris-agent (timer 60s)    │        ▼                      ▼
@@ -71,7 +71,7 @@ TODO (docs-author): 3–5 outcomes. The business detail lives in the [PRD goals]
    │                            │   SyncLog, SyncJob(s)                  │
    │ REST v3                    │  SyncWorker: claim jobs SKIP LOCKED →  │
    └────────────────────────────│   adapter.push → link.lastSyncedHash   │
- Google Tasks / Calendar ◄──────│  PostgreSQL                            │
+ Google Tasks ◄─────────────────│  PostgreSQL                            │
                     REST        └────────────────────────────────────────┘
 ```
 
@@ -104,7 +104,7 @@ Documentation Baseline Established (PRD, DDD, ADR, Specs). Implementation has no
 <!-- TODO (docs-author): duplicates the PRD's functional requirements; keep one owner. -->
 
 - **Taskwarrior sync:** `on-add` and `on-modify` hooks trigger on task **creation** and **modification**. Spool-first delivery (no network I/O in the hook) plus a pull agent keep personal and work PCs in sync under the same task UUIDs.
-- **Google Tasks & Calendar sync:** Apps Script pushes inbound changes every minute; Iris writes outbound through the REST APIs. Tasks with a due date appear as events on a dedicated `Iris` calendar.
+- **Google Tasks sync:** Apps Script pushes inbound changes every minute; Iris writes outbound through the REST API. Tasks with a due date show up in Google Calendar through Google Tasks. Event sync on a dedicated `Iris` calendar comes after the MVP (PRD FR-15).
 - **Habitica sync:** tasks become todos, and completing a task anywhere scores it up for XP and gold.
 - **Loop-free, conflict-aware core:** echo suppression through per-link projected hashes, last-writer-wins on source timestamps, and partial merge by field support.
 - **Command center:** an admin JSON API to inspect tasks, links and sync history, and to retry failed jobs.

@@ -42,7 +42,7 @@ Check the `format filter` syntax against the Caddy 2 docs you have; if it has ch
 ## 4. Runbook (`docs/runbook.md`) — the agent writes it with these sections, commands only, no prose padding
 
 1. **Server:** DNS → VPS, clone, `cp .env.example .env`, generate secrets (`openssl rand -base64 48 | tr -d '/+=' | cut -c1-48`) for the 3 tokens + Habitica secret, set `IRIS_TIMEZONE`, `IRIS_DOMAIN`, `docker compose -f docker-compose.prod.yml up -d --build`, verify `curl https://$IRIS_DOMAIN/health`.
-2. **Google:** create an OAuth Desktop client, enable the Tasks and Calendar APIs, `npm run google:auth` locally, set the `GOOGLE_*` values and the target IDs (how to find the task list ID via the API Explorer `tasklists.list`; the calendar ID from Calendar settings), add targets to `IRIS_PUSH_TARGETS`, restart.
+2. **Google:** create an OAuth Desktop client, enable the Tasks API (and the Calendar API once spec 08 ships, post-MVP), `npm run google:auth` locally, set the `GOOGLE_*` values and the target IDs (how to find the task list ID via the API Explorer `tasklists.list`; the calendar ID from Calendar settings, only with spec 08), add targets to `IRIS_PUSH_TARGETS`, restart.
 3. **Apps Script:** as in `integrations/google-apps-script/README.md`.
 4. **Habitica:** set `HABITICA_USER_ID`/`HABITICA_API_KEY` (Settings → API), `npm run habitica:webhook https://$IRIS_DOMAIN`.
 5. **Each PC:** `agents/taskwarrior/install.sh`, edit `agent.json` (URL, agent token, unique `deviceId`), `iris_agent.py push-all` (**on one PC only**), `iris_agent.py status`.

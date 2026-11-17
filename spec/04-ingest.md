@@ -127,15 +127,15 @@ Take this lock **last** in the transaction (immediately before commit) to keep c
 
 `IngestService.ingestMany(changes)`: processes sequentially and returns an `IngestResult[]` in the same order. An exception in one item yields `{ outcome: 'REJECTED_INVALID', reason: 'internal error' }` for that item, logs it with `Logger.error`, and continues.
 
-## Tests (e2e against Postgres, `test/ingest.e2e-spec.ts`; `IRIS_PUSH_TARGETS=GOOGLE_TASKS,HABITICA,GOOGLE_CALENDAR`)
+## Tests (e2e against Postgres, `test/ingest.e2e-spec.ts`; `IRIS_PUSH_TARGETS=GOOGLE_TASKS,HABITICA`)
 
-1. New TASKWARRIOR upsert → task v1, link ACTIVE, 1 TaskChange, SyncLog APPLIED/CREATE, 3 PENDING jobs.
-2. Same payload again → NOOP_DUPLICATE, still 3 jobs (coalesced), version 1.
+1. New TASKWARRIOR upsert → task v1, link ACTIVE, 1 TaskChange, SyncLog APPLIED/CREATE, 2 PENDING jobs.
+2. Same payload again → NOOP_DUPLICATE, still 2 jobs (coalesced), version 1.
 3. Echo: set the GOOGLE_TASKS link `lastSyncedHash = hashProjection(GT, task)`, ingest a GT change with the same projection and a newer `sourceUpdatedAt` → NOOP_ECHO, task unchanged.
 4. Stale: GT change older than `lastEditAt − 2s` → REJECTED_STALE and a GT job enqueued.
 5. Partial merge: a GT change of the title only keeps tags and priority set by TW.
-6. Calendar DELETE → due cleared, status unchanged, CAL link DETACHED.
-7. Habitica DELETE → status DELETED, link DETACHED, jobs for GT and CAL.
+6. *(Added with spec 08, post-MVP; run with `GOOGLE_CALENDAR` in `IRIS_PUSH_TARGETS`.)* Calendar DELETE → due cleared, status unchanged, CAL link DETACHED.
+7. Habitica DELETE → status DELETED, link DETACHED, a job for GT.
 8. `irisTaskId` hint attaches the link to an existing task (no new task).
 9. PENDING_CREATE adoption: a GT link with no id + an unknown-id GT change with an identical projection → link adopted, no new task.
 10. Unknown-id DELETE → IGNORED.

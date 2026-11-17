@@ -44,7 +44,7 @@ Input: a raw Tasks API resource `{ id, title?, notes?, status, due?, completed?,
 
 ## 6. Apps Script (`integrations/google-apps-script/`)
 
-`appsscript.json`: `timeZone` = same as `IRIS_TIMEZONE`, `runtimeVersion: "V8"`, advanced services `Tasks v1` and `Calendar v3` (the Calendar part is used in spec 08), `oauthScopes`: tasks, calendar.readonly, script.external_request, script.scriptapp.
+`appsscript.json`: `timeZone` = same as `IRIS_TIMEZONE`, `runtimeVersion: "V8"`, advanced service `Tasks v1`, `oauthScopes`: tasks, script.external_request, script.scriptapp. Spec 08 (post-MVP) adds the `Calendar v3` service and the `calendar.readonly` scope.
 
 `Code.gs` (Tasks part; spec 08 adds `syncCalendar_`). **Script Properties:** `IRIS_URL`, `IRIS_TOKEN`, `TASKLIST_ID`, `TASKS_LAST_RUN`.
 

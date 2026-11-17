@@ -95,8 +95,8 @@ Query params are validated with zod (`limit` 1–200).
 ## Tests
 
 - Unit (`sync-worker.service.spec.ts`, Prisma mocked or e2e DB — your choice, but cover every branch):
-  create; update; skip-when-hash-equal; delete when DELETED; calendar delete when due cleared; RemoteNotFound → re-create; Habitica completed + NotFound → DETACHED without create; Habitica DETACHED + completed → no create; retry backoff math; DEAD after 10; PermanentError → DEAD; PENDING_CREATE committed before `create()` is called (assert via the fake adapter reading the DB inside `create`).
-- E2E `dispatch.e2e-spec.ts`: ingest TW change → run `tick()` with fakes for all three targets → links ACTIVE with hashes; then ingest a GT echo of the pushed state → NOOP_ECHO.
+  create; update; skip-when-hash-equal; delete when DELETED; RemoteNotFound → re-create; Habitica completed + NotFound → DETACHED without create; Habitica DETACHED + completed → no create; retry backoff math; DEAD after 10; PermanentError → DEAD; PENDING_CREATE committed before `create()` is called (assert via the fake adapter reading the DB inside `create`). Spec 08 (post-MVP) adds: calendar delete when due cleared.
+- E2E `dispatch.e2e-spec.ts`: ingest TW change → run `tick()` with fakes for both MVP targets (Google Tasks, Habitica) → links ACTIVE with hashes; then ingest a GT echo of the pushed state → NOOP_ECHO.
 - E2E `admin.e2e-spec.ts`: list/filter/paginate, detail, retry state machine (202/409), resync enqueues.
 
 ## Done when
